@@ -1,0 +1,335 @@
+openapi: 3.0.0
+info:
+  title: API de partidos
+  description: Api para controle de partidos e seus associados
+  version: "0.1"
+  contact:
+    name: João Danilo Zucolotto
+    url: https://github.com/joaodanilo123
+
+components:
+  schemas:
+    Partido:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "Idenficador unico do partido no banco de dados"
+          example: 1
+        name:
+          type: string
+          description: "Nome do partido"
+          example: "Partido dos Trabalhadores"
+        initials:
+          type: string
+          description: "Sigla do partido"
+          example: "PT"
+        ideology:
+          type: string
+          description: "Ideologia do partido"
+          example: "ESQUERDA"
+        foundation:
+          type: string
+          description: "Data de fundação do partido"
+          example: "10/02/1980"
+    
+    PartidoRequestBody:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Nome do partido"
+          example: "Partido dos Trabalhadores"
+        initials:
+          type: string
+          description: "Sigla do partido"
+          example: "PT"
+        ideology:
+          type: string
+          description: "Ideologia do partido"
+          example: "ESQUERDA"
+        foundation:
+          type: string
+          description: "Data de fundação do partido"
+          example: "10/02/1980"
+    
+    Associado:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "Idenficador unico do associado no banco de dados"
+          example: 1
+        name:
+          type: string
+          description: "Nome do associado"
+          example: "João Pedro"
+        role:
+          type: string
+          description: "Cargo político do associado"
+          example: "SENADOR"
+        gender:
+          type: string
+          description: "sexo do associado"
+          example: "MASCULINO"
+        birthDate:
+          type: string
+          description: "Data de nascimento"
+          example: "10/02/1980"
+        partyId:
+          type: integer
+          description: "Idenficador do partido do qual o associado faz parte"
+          example: null
+    
+    AssociadoRequestBody:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Nome do associado"
+          example: "João Pedro"
+        role:
+          type: string
+          description: "Cargo político do associado"
+          example: "SENADOR"
+        gender:
+          type: string
+          description: "sexo do associado"
+          example: "MASCULINO"
+        birthDate:
+          type: string
+          description: "Data de nascimento"
+          example: "10/02/1980"
+    
+
+paths:
+  /partidos:
+    get:
+      summary: Recupera as informações de todos os partidos
+      parameters: 
+      - name: ideologia
+        description: "Ideologia dos partidos as serem buscados"
+        in: query
+        schema:
+          type: string
+        required: false
+        example: ESQUERDA
+      
+      responses:
+        200:
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Partido"
+        404:
+          description: Nenhum registro encontrado
+    post:
+      summary: "registra um novo partido no sistema"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PartidoRequestBody"
+              
+      responses:
+        201:
+          description: Criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Partido"
+        400:
+            description: ALgum dos paremetros da requisção foram enviados de forma incorreta
+
+          
+  /partidos/{id}:
+    parameters: 
+      - name: id
+        description: "Identificador do partido as ser buscado"
+        in: path
+        schema:
+          type: integer
+        required: true
+        example: 1
+    get:
+      summary: retorna as informações de um único partido
+      responses:
+        200: 
+          description: sucesso
+          content:
+            application/json:
+                schema:
+                  $ref: "#/components/schemas/Partido"
+        404:
+          description: Nenhum registro encontrado
+    
+    put:
+      summary: atualiza as informações de um único partido
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PartidoRequestBody"
+      responses:
+        200:
+          description: Atualizado com sucesso
+        400:
+            description: ALgum dos paremetros da requisção foram enviados de forma incorreta
+        404:
+            description: Partido não encontrado
+            
+    delete:
+      summary: Remove um partido
+      responses:
+        200:
+          description: removido com sucesso
+        404:
+          description: Partido não encontrado
+  
+  /associados:
+    get:
+      summary: Recupera as informações de todos os associados
+      parameters: 
+      - name: cargo
+        description: "cargo político dos associados as serem buscados"
+        in: query
+        schema:
+          type: string
+        required: false
+        example: DEPUTADO_FEDERAL
+      
+      responses:
+        200:
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Associado"
+        404:
+          description: Nenhum registro encontrado
+    post:
+      summary: "registra um novo associado no sistema"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssociadoRequestBody"
+              
+      responses:
+        201:
+          description: Criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Associado"
+        400:
+            description: Algum dos paremetros da requisção foram enviados de forma incorreta
+
+
+  /associados/{id}:
+    parameters: 
+    - name: id
+      description: "Identificador do associado as ser buscado"
+      in: path
+      schema:
+        type: integer
+      required: true
+      example: 1
+    get:
+      summary: retorna as informações de um único associado
+      responses:
+        200: 
+          description: sucesso
+          content:
+            application/json:
+                schema:
+                  $ref: "#/components/schemas/Associado"
+        404:
+          description: Nenhum registro encontrado
+    put:
+      summary: atualiza as informações de um único associado
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssociadoRequestBody"
+      responses:
+        200:
+          description: Atualizado com sucesso
+        400:
+            description: ALgum dos paremetros da requisção foram enviados de forma incorreta
+        404:
+            description: Partido não encontrado
+            
+    delete:
+      summary: Remove um partido
+      responses:
+        200:
+          description: removido com sucesso
+        404:
+          description: Partido não encontrado
+  
+  /associados/partidos:
+    post:
+      summary: Filia um associado em um partido
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                associateId:
+                  type: integer
+                  description: "identificador do associado"
+                partyId:
+                  type: integer
+                  description: "identificador do partido"
+      responses:
+        201:
+          description: "Registro incluido com sucesso"
+        
+        404:
+          description: "Partido ou associado não encontrado"
+  /associados/{id}/partidos:
+    parameters: 
+      - name: id
+        description: "Identificador do associado as ser buscado"
+        in: path
+        schema:
+          type: integer
+        required: true
+        example: 1
+    delete:
+      summary: deleta uma filiação
+      responses:
+        200:
+          description: "Registro deletado com sucesso"
+        
+        404:
+          description: "Associado não encontrado"
+  
+  /partidos/{id}/associados:
+    parameters: 
+      - name: id
+        description: "Identificador do partido a ser buscado"
+        in: path
+        schema:
+          type: integer
+        required: true
+        example: 1
+    get:
+      summary: Retorna todos os associados filiados a determinado partido
+      responses:
+        200:
+          description: "Sucesso"
+        404:
+          description: "Partido"
+        
+        
+        
+    
